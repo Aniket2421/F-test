@@ -24,9 +24,10 @@ function CreateBlog() {
             title,
             textBody,
         };
+        const url = `${process.env.REACT_APP_BACKEND_URL}/blog/create-blog`
 
         axios
-            .post("http://localhost:8001/blog/create-blog", blogObj, {
+            .post(url, blogObj, {
                 headers: {
                     "X-Acciojob": token,
                 },

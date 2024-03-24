@@ -1,8 +1,14 @@
 import axios from "axios";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import { toast } from 'react-toastify';
 
-function UserCard({ userData }) {
+
+
+function UserCard({ userData, updateFollowStatus }) {
+
+    const [follow, setFollow] = useState(userData.follow)
     const token = localStorage.getItem("token");
 
     const handleFollow = (userId) => {
@@ -20,10 +26,10 @@ function UserCard({ userData }) {
             )
             .then((res) => {
                 if (res.data.status === 200) {
-                    alert(res.data.message);
-                    window.location.reload();
+                    updateFollowStatus(userId, true);
+                    toast.success("Follow Successful");
                 } else {
-                    alert(res.data.message);
+                    console.log(res.data.message)
                 }
             })
             .catch((err) => {
@@ -46,10 +52,9 @@ function UserCard({ userData }) {
             )
             .then((res) => {
                 if (res.data.status === 200) {
-                    alert(res.data.message);
-                    window.location.reload();
+                    updateFollowStatus(userId, false);
                 } else {
-                    alert(res.data.message);
+                    console.log(res.data.message);
                 }
             })
             .catch((err) => {
@@ -58,29 +63,27 @@ function UserCard({ userData }) {
     };
 
     return (
-        <Card style={{ width: "18rem", marginRight: "20px" }}>
+        <Card className="custom-card" style={{ width: "18rem", marginRight: "20px" }}>
             <Card.Body>
                 <Card.Title>{userData.name}</Card.Title>
                 <Card.Text>{userData.username}</Card.Text>
                 <Card.Text>{userData.email}</Card.Text>
 
-                {userData.follow ? (
-                    <>
-                        <Button
-                            variant="danger"
-                            onClick={() => handleUnfollow(userData._id)}
-                        >
-                            Unfollow
-                        </Button>
-                    </>
+                {follow ? (
+
+                    <Button variant={follow ? "danger" : "primary"} onClick={() => { handleUnfollow(userData._id); setFollow(!follow) }}>Unfollow</Button>
+
                 ) : (
-                    <Button variant="primary" onClick={() => handleFollow(userData._id)}>
-                        Follow
-                    </Button>
+
+                    <Button variant={follow ? "danger" : "primary"} onClick={() => { handleFollow(userData._id); setFollow(!follow) }}>Follow</Button>
+
+
                 )}
             </Card.Body>
         </Card>
     );
 }
+
+
 
 export default UserCard;

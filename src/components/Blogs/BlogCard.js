@@ -1,14 +1,59 @@
 import axios from "axios";
 import { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function BlogCard({ blogData, homepage }) {
-    const [isEdit, setIsEdit] = useState();
-    const [newTitle, setNewTitle] = useState();
-    const [newTextBody, setNewTextBody] = useState();
+    const [isEdit, setIsEdit] = useState(false);
+    const [newTitle, setNewTitle] = useState("");
+    const [newTextBody, setNewTextBody] = useState("");
 
     const token = localStorage.getItem("token");
 
+    const ConfirmationDialog = ({ closeToast, handleDelete, blogId }) => (
+        <div>
+            <p>Are You Sure To Delete This Blog...</p>
+
+            <Button
+                variant="danger"
+                style={{ marginRight: "10px" }}
+                onClick={() => {
+                    closeToast();
+                    handleDelete(blogId);
+                }}
+            >
+                Yes
+            </Button>
+            <Button
+                variant="primary"
+                style={{ marginRight: "10px" }} onClick={closeToast}>No</Button>
+        </div>
+    );
+
+    const handleConfirmation = (blogId) => {
+        toast.warn(
+            <ConfirmationDialog blogId={blogId} handleDelete={handleDelete} />,
+            {
+                position: "top-center",
+                autoClose: false,
+                closeOnClick: false,
+                draggable: true,
+                closeButton: false,
+
+
+                progress: undefined,
+                theme: "dark",
+                transition: "Bounce"
+
+
+
+
+
+
+            }
+        );
+    };
     const handleDelete = (blogId) => {
         axios
             .delete(
@@ -21,14 +66,14 @@ function BlogCard({ blogData, homepage }) {
             )
             .then((res) => {
                 if (res.data.status === 200) {
-                    alert(res.data.message);
+                    toast.success(res.data.message);
                     window.location.reload();
                 } else {
-                    alert(res.data.message);
+                    toast.error(res.data.message);
                 }
             })
             .catch((err) => {
-                alert(err);
+                toast.error(err.message);
             });
     };
 
@@ -42,21 +87,21 @@ function BlogCard({ blogData, homepage }) {
         };
 
         axios
-            .put(`${process.env.REACT_APP_BACKEND_URL}/blog/edit-blog`, blogObj, {
+            .put(`${process.env.REACT_APP_BACKEND_URL} / blog / edit-blog`, blogObj, {
                 headers: {
                     "X-Acciojob": token,
                 },
             })
             .then((res) => {
                 if (res.data.status === 200) {
-                    alert(res.data.message);
+                    toast.success(res.data.message);
                     window.location.reload();
                 } else {
-                    alert(res.data.message);
+                    toast.error(res.data.message);
                 }
             })
             .catch((err) => {
-                alert(err);
+                toast.error(err.message);
             });
     };
 
@@ -82,7 +127,10 @@ function BlogCard({ blogData, homepage }) {
                         >
                             Edit
                         </Button>
-                        <Button variant="danger" onClick={() => handleDelete(blogData._id)}>
+                        <Button
+                            variant="danger"
+                            onClick={() => handleConfirmation(blogData._id)}
+                        >
                             Delete
                         </Button>
                     </>
@@ -99,6 +147,7 @@ function BlogCard({ blogData, homepage }) {
                                 <Form.Control
                                     type="text"
                                     placeholder="Enter Title"
+                                    value={newTitle}
                                     onChange={(e) => setNewTitle(e.target.value)}
                                 />
                             </Form.Group>
@@ -108,15 +157,14 @@ function BlogCard({ blogData, homepage }) {
                                     as="textarea"
                                     rows={5}
                                     placeholder="Enter TextBody"
+                                    value={newTextBody}
                                     onChange={(e) => setNewTextBody(e.target.value)}
                                 />
                             </Form.Group>
                             <Button type="submit">Edit</Button>
                         </Form>
                     </>
-                ) : (
-                    <></>
-                )}
+                ) : null}
             </Card.Body>
         </Card>
     );
