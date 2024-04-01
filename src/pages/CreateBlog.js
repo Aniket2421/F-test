@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
+import { useNavigate } from "react-router";
+import { ToastContainer, toast } from 'react-toastify';
+
 
 function CreateBlog() {
     const [title, setTitle] = useState();
     const [textBody, setTextBody] = useState();
+    const [loading, setloading] = useState(false);
+    const navigate = useNavigate()
+
 
     const token = localStorage.getItem("token");
 
@@ -19,6 +25,7 @@ function CreateBlog() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setloading(true)
 
         const blogObj = {
             title,
@@ -34,18 +41,29 @@ function CreateBlog() {
             })
             .then((res) => {
                 if (res.data.status === 201) {
-                    window.location.href = "/my-blogs";
+                    setloading(false)
+                    toast.success("Blog Created SucessFully");
+                    setTimeout(() => {
+                        navigate("/my-blogs")
+
+                    }, 560)
+
                 } else {
                     alert(res.data.message);
+                    setloading(false)
                 }
             })
             .catch((err) => {
                 alert(err);
+                setloading(false)
             });
+
+
     };
 
     return (
         <div style={{ margin: "50px" }}>
+            <ToastContainer position="top-right" autoClose={500} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
             <h1 style={{ marginBottom: "20px" }}>Create Blog</h1>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="title">
@@ -65,7 +83,8 @@ function CreateBlog() {
                         onChange={(e) => setTextBody(e.target.value)}
                     />
                 </Form.Group>
-                <Button type="submit">Create Blog</Button>
+                <Button className=" shadow-lg" type="submit" disabled={loading}> {loading ? ("Loading...") : ("Create Blog")}</Button>
+
             </Form>
         </div>
     );

@@ -1,14 +1,17 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import BlogCard from "../components/Blogs/BlogCard";
+import { useNavigate } from "react-router";
 
 function Homepage() {
-    const [homepageBlogs, setHomepageBlogs] = useState();
+    const [homepageBlogs, setHomepageBlogs] = useState([]);
     const token = localStorage.getItem("token");
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (!token) {
-            window.location.href = "/login";
+            navigate("/login")
+
         } else {
             axios
                 .get(`${process.env.REACT_APP_BACKEND_URL}/blog/homepage-blogs`, {
@@ -31,10 +34,11 @@ function Homepage() {
 
     return (
         <div>
-            <h1 style={{ margin: "30px" }}>Homepage</h1>
-            {homepageBlogs?.map((blog) => (
+            <h1 style={{ margin: "30px" }} >Homepage</h1>
+
+            {homepageBlogs?.length > 0 ? homepageBlogs.map((blog) => (
                 <BlogCard blogData={blog} homepage={true} />
-            ))}
+            )) : <h4 style={{ margin: "30px",  textAlign: "center"}} >Please follow few  <a href="/users">Peoples</a> first</h4>}
         </div>
     );
 }

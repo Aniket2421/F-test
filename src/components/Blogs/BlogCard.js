@@ -8,8 +8,19 @@ function BlogCard({ blogData, homepage }) {
     const [isEdit, setIsEdit] = useState(false);
     const [newTitle, setNewTitle] = useState("");
     const [newTextBody, setNewTextBody] = useState("");
+    const [showFullText, setShowFullText] = useState(false);
 
     const token = localStorage.getItem("token");
+
+    const toggleText = () => {
+        setShowFullText(!showFullText);
+    };
+
+    function formatDate(timestamp) {
+        const date = new Date(timestamp);
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+        return date.toLocaleDateString(undefined, options);
+    }
 
     const ConfirmationDialog = ({ closeToast, handleDelete, blogId }) => (
         <div>
@@ -106,14 +117,20 @@ function BlogCard({ blogData, homepage }) {
     };
 
     return (
-        <Card style={{ margin: "2rem" }}>
+        <Card  style={{ margin: "2rem" }}>
             <Card.Body>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <Card.Title>{blogData.title}</Card.Title>
-                    <Card.Text>{blogData.creationDateTime}</Card.Text>
-                </div>
-                <Card.Text>{blogData.textBody}</Card.Text>
-
+                    <Card.Text>{formatDate(blogData.creationDateTime)}</Card.Text>                </div>
+                <Card.Text>
+                    {showFullText ? blogData.textBody : (blogData?.textBody.length > 100 ? `${blogData.textBody.slice(0, 100)}...` : blogData.textBody)}
+                    {(!showFullText && blogData?.textBody.length  >100  )&&(
+                        
+                        <Button variant="link" onClick={toggleText}>
+                            Read More
+                        </Button>
+                    )}
+                </Card.Text>
                 {homepage ? (
                     <>
                         <h6>Created By - {blogData.username}</h6>

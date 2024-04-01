@@ -1,13 +1,18 @@
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import { useNavigate } from "react-router";
 
 function Header() {
     const token = localStorage.getItem("token");
+    const navigate = useNavigate()
 
     const handleLogout = () => {
         localStorage.removeItem("token");
-        window.location.href = "login";
+        localStorage.removeItem("userobj");
+        navigate("/login")
+
+
     };
 
     return (
@@ -23,7 +28,7 @@ function Header() {
                     <Nav className="me-auto">
                         <Nav.Link style={{ fontWeight: "800" }} href="/homepage">Home</Nav.Link>
                         <Nav.Link style={{ fontWeight: "800" }} href="/create-blog">Create Blog</Nav.Link>
-                        <Nav.Link style={{ fontWeight: "800" }} href="/my-blogs">My Blogs</Nav.Link>
+                        <Nav.Link style={{ fontWeight: "800" }} href="/my-blogs">My Profile</Nav.Link>
                         <Nav.Link style={{ fontWeight: "800" }} href="/users">Users</Nav.Link>
                         {token ? (
                             <>

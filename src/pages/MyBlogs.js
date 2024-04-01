@@ -3,11 +3,15 @@ import React, { useEffect, useState } from "react";
 import BlogCard from "../components/Blogs/BlogCard";
 import { useNavigate } from "react-router";
 import { ToastContainer } from 'react-toastify';
+import { Button } from "react-bootstrap";
 
 
 function MyBlogs() {
-  const [myBlogs, setMyBlogs] = useState();
+  const [myBlogs, setMyBlogs] = useState(null);
   const token = localStorage.getItem("token");
+  const userobj = JSON.parse(localStorage.getItem("userobj"))
+  console.log(userobj)
+
 
   const navigate = useNavigate()
 
@@ -37,7 +41,22 @@ function MyBlogs() {
 
   return (
     <div>
-      <h1 style={{ margin: "30px" }}>My Blogs</h1>
+
+      <div className="d-flex flex-row justify-content-between m-4">
+        <div>
+          <h1 >Welcome {(userobj.name.toUpperCase())}</h1>
+
+        </div>
+        <div>
+
+          <Button> Posts :{myBlogs ? myBlogs.length
+            : "0"}{console.log(myBlogs)}
+
+          </Button>
+        </div>
+
+      </div>
+
 
 
       <ToastContainer
@@ -51,7 +70,7 @@ function MyBlogs() {
         draggable
         pauseOnHover
         theme="dark"
-        transition= "Bounce"
+        transition="Bounce"
       />
 
 
